@@ -52,6 +52,7 @@
         <module>introduccion-proyect-reactor</module>
         <module>pruebas-step-verifier</module>
         <module>pruebas-servicios-verifier</module>
+        <module>contrapresion-ejemplos</module>
     </modules>
 
     <build>

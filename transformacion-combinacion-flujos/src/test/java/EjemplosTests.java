@@ -62,4 +62,41 @@ public class EjemplosTests {
                 .expectNextCount(9)
                 .verifyComplete();
     }
+
+    @Test
+    public void testCombinarFlujosUsandoConcatConDelay() {
+        Flux<String> nombres = Flux
+                .just("Luis", "Sebastián", "Gabriela", "Pedro", "Jesús", "Pepe")
+                .delayElements(Duration.ofSeconds(1));
+        Flux<String> roles = Flux
+                .just("admin", "user", "security")
+                .delayElements(Duration.ofSeconds(1));
+
+        Flux<String> fluxConcat = Flux.concat(nombres, roles).log();
+
+        StepVerifier
+                .create(fluxConcat)
+                .expectSubscription()
+                .expectNext("Luis", "Sebastián", "Gabriela", "Pedro", "Jesús", "Pepe", "admin", "user", "security")
+                .verifyComplete();
+    }
+
+    @Test
+    public void testCombinarFlujosUsandoZipConDelay() {
+        Flux<String> nombres = Flux
+                .just("Luis", "Sebastián", "Gabriela", "Pedro", "Jesús", "Pepe")
+                .delayElements(Duration.ofSeconds(1));
+        Flux<String> roles = Flux
+                .just("admin", "user", "security")
+                .delayElements(Duration.ofSeconds(1));
+
+        Flux<String> fluxZip = Flux.zip(nombres, roles, (f1, f2) -> {
+            return f1.concat(" ").concat(f2);
+        }).log();
+
+        StepVerifier
+                .create(fluxZip)
+                .expectNext("Luis admin", "Sebastián user", "Gabriela security")
+                .verifyComplete();
+    }
 }
